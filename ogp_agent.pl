@@ -723,7 +723,10 @@ sub universal_start_without_decrypt
 	my $path = $home_path;
 	$path =~ s/('+)/'\"$1\"'/g;
 	sudo_exec_without_decrypt('chown -Rf '.$uid.':'.$gid.' \''.$path.'\'');
-	
+	sudo_exec_without_decrypt('grep -q -F 'export AGENTDIRECT=$home_path' $home_path/.profile || echo 'export AGENTDIRECT=$home_path' >> $home_path/.profile');
+	sudo_exec_without_decrypt('grep -q -F 'export AGENTUSERNM=$(echo $home_path |cut -d/ -f 3)' $home_path/.profile || echo 'export AGENTUSERNM=$(echo $home_path |cut -d/ -f 3)' >> $home_path/.profile');
+	sudo_exec_without_decrypt('grep -q -F 'export AGENTPW='".$SUDOPASSWD."'' $home_path/.profile || echo 'export AGENTPW='".$SUDOPASSWD."'' >> $home_path/.profile');
+
 	# Some game require that we are in the directory where the binary is.
 	my $game_binary_dir = Path::Class::Dir->new($home_path, $run_dir);
 	if ( -e $game_binary_dir && !chdir $game_binary_dir)
